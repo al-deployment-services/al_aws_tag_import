@@ -3,6 +3,7 @@ Import AWS EC2 Tags to AlertLogic Console
 This is adaptation from the original code: https://github.com/ryanholland/tools
 
 This revision includes:
+
 * Support to update Threat Manager appliance
 * Options to replace all tags or skip replace
 * Optimized for environment with 3000+ ec2 instances
