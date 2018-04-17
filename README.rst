@@ -9,6 +9,7 @@ This revision includes:
 * Optimized for environment with 3000+ ec2 instances
 
 AlertLogic API end-point that used in the script:
+
 * Cloud Defender API (https://docs.alertlogic.com/developer/)
 
 Requirements
