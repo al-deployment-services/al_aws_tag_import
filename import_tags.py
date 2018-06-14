@@ -234,4 +234,5 @@ def lambda_handler(event, context):
 									break
 
 	print ("Script ended : " + str(datetime.now()))
+	print ("Successfully updated " + str(number_of_updates ) + " protectedhosts and " + str(number_of_log_updates) + " log sources. " + str(number_of_failed_updates) + " failed protectedhosts and " + str(number_of_failed_log_updates) + " failed log sources" + " and successfully updated " + str(number_of_tm_updates ) + " appliances and " + str(number_of_failed_tm_updates) + " failed appliances")
 	return "Successfully updated " + str(number_of_updates ) + " protectedhosts and " + str(number_of_log_updates) + " log sources. " + str(number_of_failed_updates) + " failed protectedhosts and " + str(number_of_failed_log_updates) + " failed log sources" + " and successfully updated " + str(number_of_tm_updates ) + " appliances and " + str(number_of_failed_tm_updates) + " failed appliances"
