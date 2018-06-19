@@ -20,7 +20,7 @@ Requirements
 
 Sample Usage
 ------------
-* Use the provided [Cloud Formation](/cloud_formation) to quickly deploy the stack.
+* Use the provided [Cloud Formation](/cloud_formation) or [Terraform](/terraform) to quickly deploy the stack.
 * Alternatively you can use the provided Lambda packages and deploy it by your self.
 * Or adapt the source code and use it on your own custom Lambda code.
 
