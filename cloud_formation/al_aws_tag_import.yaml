@@ -208,6 +208,7 @@ Resources:
       Runtime: python2.7
       Handler: import_tags.lambda_handler
       Timeout: '300'
+      MemorySize: 512
       FunctionName: !Sub "${AWS::StackName}-ALAWSImportTag"
       Code:
         S3Bucket:
