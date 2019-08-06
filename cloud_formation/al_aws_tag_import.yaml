@@ -1,4 +1,4 @@
-AWSTemplateFormatVersion: '2010-09-09'
+AWSTemplateFormatVersion: "2010-09-09"
 Description: CFT to launch lambda function to import AWS tags to Alert Logic Cloud Defender
 Parameters:
   pCID:
@@ -36,28 +36,41 @@ Resources:
     Type: AWS::KMS::Key
     Properties:
       Description: AL AWS Tag Import Lambda KMS Key
-      Enabled: 'true'
-      EnableKeyRotation: 'true'
+      Enabled: "true"
+      EnableKeyRotation: "true"
       KeyPolicy:
-        Version: '2012-10-17'
+        Version: "2012-10-17"
         Id: key-default-1
         Statement:
-        - Sid: Allow administration of the key
-          Effect: Allow
-          Principal:
-            AWS: !Sub 'arn:aws:iam::${AWS::AccountId}:root'
-          Action: ['kms:Create*', 'kms:Describe*', 'kms:Enable*', 'kms:List*', 'kms:Put*',
-            'kms:Update*', 'kms:Revoke*', 'kms:Disable*', 'kms:Get*', 'kms:Delete*',
-            'kms:ScheduleKeyDeletion', 'kms:CancelKeyDeletion', 'kms:Decrypt']
-          Resource: '*'
-        - Sid: Allow Lambda to use the key
-          Effect: Allow
-          Principal:
-            AWS:
-              - !GetAtt [ALAWSImportTagLambdaRole, Arn]
-              - !GetAtt [EncryptionHelperLambdaRole, Arn]
-          Action: ['kms:Encrypt', 'kms:Decrypt']
-          Resource: '*'
+          - Sid: Allow administration of the key
+            Effect: Allow
+            Principal:
+              AWS: !Sub "arn:aws:iam::${AWS::AccountId}:root"
+            Action:
+              [
+                "kms:Create*",
+                "kms:Describe*",
+                "kms:Enable*",
+                "kms:List*",
+                "kms:Put*",
+                "kms:Update*",
+                "kms:Revoke*",
+                "kms:Disable*",
+                "kms:Get*",
+                "kms:Delete*",
+                "kms:ScheduleKeyDeletion",
+                "kms:CancelKeyDeletion",
+                "kms:Decrypt",
+              ]
+            Resource: "*"
+          - Sid: Allow Lambda to use the key
+            Effect: Allow
+            Principal:
+              AWS:
+                - !GetAtt [ALAWSImportTagLambdaRole, Arn]
+                - !GetAtt [EncryptionHelperLambdaRole, Arn]
+            Action: ["kms:Encrypt", "kms:Decrypt"]
+            Resource: "*"
 
   LambdaKMSKeyAlias:
     Type: "AWS::KMS::Alias"
@@ -69,21 +82,21 @@ Resources:
     Type: AWS::IAM::Role
     Properties:
       AssumeRolePolicyDocument:
-        Version: '2012-10-17'
+        Version: "2012-10-17"
         Statement:
-        - Effect: Allow
-          Principal:
-            Service: [lambda.amazonaws.com]
-          Action: ['sts:AssumeRole']
+          - Effect: Allow
+            Principal:
+              Service: [lambda.amazonaws.com]
+            Action: ["sts:AssumeRole"]
       Path: /
       Policies:
-      - PolicyName: LambdaLogging
-        PolicyDocument:
-          Version: '2012-10-17'
-          Statement:
-          - Resource: '*'
-            Action: ['logs:*']
-            Effect: Allow
+        - PolicyName: LambdaLogging
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Resource: "*"
+                Action: ["logs:*"]
+                Effect: Allow
 
   EncryptionHelperLambda:
     Type: AWS::Lambda::Function
@@ -91,7 +104,7 @@ Resources:
       Description: Encrypt the given payload and return the CipherText
       Runtime: python2.7
       Handler: index.lambda_handler
-      Timeout: '180'
+      Timeout: "180"
       FunctionName: !Sub "${AWS::StackName}-EncryptionHelper"
       Code:
         ZipFile: |
@@ -175,31 +188,31 @@ Resources:
     Type: AWS::IAM::Role
     Properties:
       AssumeRolePolicyDocument:
-        Version: '2012-10-17'
+        Version: "2012-10-17"
         Statement:
-        - Effect: Allow
-          Principal:
-            Service: [lambda.amazonaws.com]
-          Action: ['sts:AssumeRole']
+          - Effect: Allow
+            Principal:
+              Service: [lambda.amazonaws.com]
+            Action: ["sts:AssumeRole"]
       Path: /
       Policies:
-      - PolicyName: LambdaLogging
-        PolicyDocument:
-          Version: '2012-10-17'
-          Statement:
-          - Resource: '*'
-            Action: ['logs:*']
-            Effect: Allow
-      - PolicyName: DescribeInstances
-        PolicyDocument:
-          Version: '2012-10-17'
-          Statement:
-          - Effect: Allow
-            Resource: '*'
-            Action:
-            - ec2:DescribeInstances
-            - ec2:DescribeRegions
-            - ec2:DescribeTags
+        - PolicyName: LambdaLogging
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Resource: "*"
+                Action: ["logs:*"]
+                Effect: Allow
+        - PolicyName: DescribeInstances
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Resource: "*"
+                Action:
+                  - ec2:DescribeInstances
+                  - ec2:DescribeRegions
+                  - ec2:DescribeTags
 
   ALAWSImportTagLambda:
     Type: AWS::Lambda::Function
@@ -207,58 +220,56 @@ Resources:
       Description: Import AWS tags to AlertLogic Cloud Defender UI
       Runtime: python2.7
       Handler: import_tags.lambda_handler
-      Timeout: '300'
+      Timeout: "300"
       MemorySize: 512
       FunctionName: !Sub "${AWS::StackName}-ALAWSImportTag"
       Code:
-        S3Bucket:
-          !Join
-            - '.'
-            - - !Ref 'pSourceS3Bucket'
-              - !Ref 'AWS::Region'
-        S3Key:
-          !Join
-            - '/'
-            - - 'lambda_packages'
-              - !Ref 'pLambdaPackages'
+        S3Bucket: !Join
+          - "."
+          - - !Ref "pSourceS3Bucket"
+            - !Ref "AWS::Region"
+        S3Key: !Join
+          - "/"
+          - - "lambda_packages"
+            - !Ref "pLambdaPackages"
       Role: !GetAtt [ALAWSImportTagLambdaRole, Arn]
       Environment:
         Variables:
           CID: !Ref pCID
-          DC: !Ref 'pDatacenter'
-          API_KEY: !GetAtt ['EncryptedAPIKey', 'CipherText']
-          REPLACE: !Ref 'pForceReplace'
+          DC: !Ref "pDatacenter"
+          API_KEY: !GetAtt ["EncryptedAPIKey", "CipherText"]
+          REPLACE: !Ref "pForceReplace"
 
   EncryptedAPIKey:
     Type: AWS::CloudFormation::CustomResource
-    Version: '1.0'
+    Version: "1.0"
     Properties:
       ServiceToken: !GetAtt [EncryptionHelperLambda, Arn]
       KeyId: !Ref LambdaKMSKey
-      PlainText: !Ref 'pAPIKey'
+      PlainText: !Ref "pAPIKey"
 
   ALAWSImportTagLambdaInvocationRole:
     Type: AWS::IAM::Role
     Properties:
       AssumeRolePolicyDocument:
-        Version: '2012-10-17'
+        Version: "2012-10-17"
         Statement:
-        - Effect: Allow
-          Principal:
-            Service:
-            - events.amazonaws.com
-          Action:
-          - sts:AssumeRole
+          - Effect: Allow
+            Principal:
+              Service:
+                - events.amazonaws.com
+            Action:
+              - sts:AssumeRole
       Path: /
       Policies:
-      - PolicyName: ExecuteALAWSImportTagLambda
-        PolicyDocument:
-          Version: '2012-10-17'
-          Statement:
-          - Action: ['lambda:InvokeFunction']
-            Effect: Allow
-            Resource:
-            - !GetAtt ALAWSImportTagLambda.Arn
+        - PolicyName: ExecuteALAWSImportTagLambda
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Action: ["lambda:InvokeFunction"]
+                Effect: Allow
+                Resource:
+                  - !GetAtt ALAWSImportTagLambda.Arn
 
   ALAWSImportTagLambdaPermission:
     Type: AWS::Lambda::Permission
