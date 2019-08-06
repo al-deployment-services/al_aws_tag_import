@@ -284,7 +284,7 @@ Resources:
     Properties:
       Description: !Sub "Execute the ${AWS::StackName}-ALAWSImportTagLambda on a scheduled basis"
       RoleArn: !GetAtt ALAWSImportTagLambdaInvocationRole.Arn
-      ScheduleExpression: "rate(1 hour)"
+      ScheduleExpression: "rate(1 day)"
       State: ENABLED
       Targets:
         - Arn: !GetAtt ALAWSImportTagLambda.Arn
